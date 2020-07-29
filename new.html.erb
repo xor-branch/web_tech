@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  </head>
+  <body>
+    <h1>テスト！！！！！！！！！！！！！</h1>
+    <% require 'pg' %>
+    <% connection = PG::connect(dbname: "goya") %>
+    <% connection.internal_encoding = "UTF-8" %>
+    <form action="indicate.cgi" method="POST">
+       Veuillez saisir les lettres ci-dessous<br><br>
+      <input type="text"  name="input" ><br>
+      <input type="submit" name="Transmission" >
+    </form>
+    <% result = connection.exec("select weight, give_for from crops where give_for!='自家消費';") %>
+    <% data = [] %>
+    <% result.each do |record| %>
+      <%  data << "Taille du melon amer :.#{record["weight"]}　Vendu à :#{record["give_for"]}" %>
+    <% end %>
+    <form action="goya.cgi" method="POST">
+       Cliquez sur le bouton ci-dessous pour accéder à la page d'information sur la taille du melon amer et sur la personne qui vous l'a vendu<br><br>
+       <!-- valueには、送りたいデータを代入する -->
+       <!-- name="goya"を、情報の目印とする -->
+      <input type="text" name="goya" value="<%= data.join(' ') %>">
+      <input type="submit" name="Transmission" >
+    </form>
+  </body>
+</html>
